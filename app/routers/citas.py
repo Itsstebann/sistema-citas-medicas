@@ -5,12 +5,18 @@ from app.models.cita import Cita
 from app.models.doctor import Doctor
 from app.schemas.cita import CitaCreate, CitaResponse, EstadoCita
 from app.routers.auth import get_current_user
+from datetime import datetime
+
 
 router = APIRouter(prefix="/citas", tags=["Citas"])
 
 
 @router.post("/", response_model=CitaResponse)
 def agendar_cita(cita: CitaCreate, db: Session = Depends(get_db), usuario=Depends(get_current_user)):
+    if cita.fecha_hora < datetime.now():
+        raise HTTPException(
+            status_code=400, detail="No se pueden agendar citas en el pasado")
+
     doctor = db.query(Doctor).filter(Doctor.id == cita.doctor_id).first()
     if not doctor:
         raise HTTPException(status_code=404, detail="Doctor no encontrado")
