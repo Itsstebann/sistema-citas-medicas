@@ -15,6 +15,14 @@ def agendar_cita(cita: CitaCreate, db: Session = Depends(get_db), usuario=Depend
     if not doctor:
         raise HTTPException(status_code=404, detail="Doctor no encontrado")
 
+    if cita.paciente_id:
+        from app.models.paciente import Paciente
+        paciente = db.query(Paciente).filter(
+            Paciente.id == cita.paciente_id).first()
+        if not paciente:
+            raise HTTPException(
+                status_code=404, detail="Paciente no encontrado")
+
     conflicto = db.query(Cita).filter(
         Cita.doctor_id == cita.doctor_id,
         Cita.fecha_hora == cita.fecha_hora

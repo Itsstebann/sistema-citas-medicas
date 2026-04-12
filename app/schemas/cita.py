@@ -13,6 +13,7 @@ class EstadoCita(str, Enum):
 class CitaCreate(BaseModel):
     fecha_hora: datetime
     doctor_id: int
+    paciente_id: int | None = None
     sintomas: str | None = None
     urgencia: int | None = None
 
