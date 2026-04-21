@@ -66,3 +66,13 @@ def actualizar_estado(cita_id: int, estado: EstadoCita, db: Session = Depends(ge
     db.commit()
     db.refresh(cita)
     return cita
+
+
+@router.delete("/{cita_id}")
+def eliminar_cita(cita_id: int, db: Session = Depends(get_db), usuario=Depends(get_current_user)):
+    cita = db.query(Cita).filter(Cita.id == cita_id).first()
+    if not cita:
+        raise HTTPException(status_code=404, detail="Cita no encontrada")
+    db.delete(cita)
+    db.commit()
+    return {"mensaje": "Cita eliminada"}
