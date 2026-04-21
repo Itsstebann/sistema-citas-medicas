@@ -28,3 +28,13 @@ def obtener_doctor(doctor_id: int, db: Session = Depends(get_db), usuario=Depend
     if not doctor:
         raise HTTPException(status_code=404, detail="Doctor no encontrado")
     return doctor
+
+
+@router.delete("/{doctor_id}")
+def eliminar_doctor(doctor_id: int, db: Session = Depends(get_db), usuario=Depends(get_current_user)):
+    doctor = db.query(Doctor).filter(Doctor.id == doctor_id).first()
+    if not doctor:
+        raise HTTPException(status_code=404, detail="Doctor no encontrado")
+    db.delete(doctor)
+    db.commit()
+    return {"mensaje": "Doctor eliminado"}
